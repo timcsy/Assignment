@@ -36,7 +36,7 @@ g++ -std=c++11 -o assignment assignment.cpp
 執行
 ```
 Linux/Mac:
-,/assignment [讀入檔名（預設為input.txt）] [輸出檔名（預設為output.csv）]
+./assignment [讀入檔名（預設為input.txt）] [輸出檔名（預設為output.csv）]
 
 Windows:
 assignment.exe [讀入檔名（預設為input.txt）] [輸出檔名（預設為output.csv）]

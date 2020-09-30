@@ -2,9 +2,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <random>
-#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -16,12 +15,14 @@ int main(int argc, char* argv[]) {
 	fstream fin(inFilename.c_str(), ios::in);
 	fstream fout(outFilename.c_str(), ios::out);
 
-	// obtain a time-based seed:
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	// set random seed:
+  srand((unsigned)time(NULL));
 
 	vector< vector< string > > rooms;
 	vector< string > works;
 	vector< string > dates;
+	string header;
+	vector< string > notes;
 
 	string s;
 	while (fin >> s) if (s == "rooms:") break;
@@ -36,7 +37,15 @@ int main(int argc, char* argv[]) {
 		works.push_back(s);
 	}
 	while (fin >> s) {
+		if (s == "header:") break;
 		dates.push_back(s);
+	}
+	while (fin >> s) {
+		if (s == "notes:") break;
+		header = s;
+	}
+	while (fin >> s) {
+		notes.push_back(s);
 	}
 
 	if (works.size() != rooms.size()) {
@@ -45,15 +54,25 @@ int main(int argc, char* argv[]) {
 	}
 
 	// header
-	fout << "人\\deadline,";
+	fout << header << ",";
 	for (int i = 0; i < dates.size() - 1; i++) fout << dates[i] << ",";
 	fout << dates[dates.size() - 1] << endl;
 
 	vector< vector< string > > table;
 	for (int i = 0; i < dates.size(); i++) {
 		vector< string > col;
-		shuffle(works.begin(), works.end(), std::default_random_engine(seed));
-		for (int j = 0; j < works.size(); j++) col.push_back(works[j]);
+		vector< bool > visited;
+		for (int j = 0; j < works.size(); j++) visited.push_back(false);
+		// random	
+		int n = 0, j;
+		while (n < works.size()) {
+			do {
+				j = rand() % works.size();
+			} while (visited[j]);
+			col.push_back(works[j]);
+			visited[j] = true;
+			n++;
+		}
 		table.push_back(col);
 	}
 
@@ -63,11 +82,11 @@ int main(int argc, char* argv[]) {
 		fout << table[dates.size() - 1][i] << endl;
 	}
 
-	fout << endl;
-	fout << "浴室跟廁所請選當週最髒的掃";
-	for (int i = 0; i < dates.size(); i++) fout << ",";
-	fout << "\n記得填一下聚會出席表";
-	for (int i = 0; i < dates.size(); i++) fout << ",";
+	for (int i = 0; i < notes.size(); i++) {
+		fout << endl;
+		fout << notes[i];
+		for (int j = 0; j < dates.size(); j++) fout << ",";
+	}
 
 	return 0;
 }

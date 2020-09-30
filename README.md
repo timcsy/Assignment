@@ -22,6 +22,13 @@ dates:
 11/22
 12/13
 01/03
+
+header:
+人\deadline
+
+notes:
+浴室跟廁所請選當週最髒的掃
+記得填一下聚會出席表
 ```
 
 編譯
@@ -30,7 +37,7 @@ make
 
 或者
 
-g++ -std=c++11 -o assignment assignment.cpp
+g++ -o assignment assignment.cpp
 ```
 
 執行
